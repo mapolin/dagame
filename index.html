@@ -1,0 +1,75 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Da Game</title>
+    <link rel="stylesheet" href="css/game.css" />
+    <script type="text/javascript" src="js/game.js"></script>
+    
+    <script type="text/javascript">
+        GameSettings = {
+            rows: 'choice-row',
+            choices: 'game-choice',
+            choicesElements: null,
+            activeChoice: 'choice-picked',
+            disabledChoice: 'choice-disabled'
+        };
+
+        window.onload = function() {
+            var rows = document.getElementsByClassName(GameSettings.rows);
+            GameSettings.choicesElements = document.getElementsByClassName(GameSettings.choices);
+            var i;
+            for(i = 0; i < rows.length; i++) {
+                unify(rows[i], '.' + GameSettings.choices);
+            }
+
+            for(i = 0; i < GameSettings.choicesElements.length; i++)
+                GameSettings.choicesElements[i].addEventListener('mouseup', handleChoice, false);
+        };
+    </script>
+
+    <!--[if gte IE 9]>
+        <style type="text/css">
+            .gradient {
+               filter: none;
+            }
+        </style>
+    <![endif]-->
+</head>
+<body>
+    <div id="game-playground">
+        <div id="game-content">
+            <div id="game-question" class="game-bordered-box">
+                A sample question which isn't that long but isn't very short either.
+                What do you think?
+                <div id="game-timer" class="game-bordered-box">60</div>
+            </div>
+            <div id="game-choices">
+                <div class="choice-row">
+                    <div id="choice-1" class="game-choice game-bordered-box">
+                        <span class="choice-text">
+                            A. Choice 1. A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.A. Choice 1.
+                        </span>
+                    </div>
+                    <div id="choice-2" class="game-choice game-bordered-box">
+                        <span class="choice-text">
+                            B. Choice 2.
+                        </span>
+                    </div>
+                </div>
+                <div class="choice-row">
+                    <div id="choice-3" class="game-choice game-bordered-box">
+                        <span class="choice-text">
+                            C. Choice 3.
+                        </span>
+                    </div>
+                    <div id="choice-4" class="game-choice game-bordered-box">
+                        <span class="choice-text">
+                            D. Choice 4.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
