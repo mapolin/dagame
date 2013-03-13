@@ -63,17 +63,23 @@ function hasClass(elem, klass) {
 
 function removeClass(elem, klass) {
     var tmp = hasClass(elem, ' ' + klass) ? ' ' + klass : klass;
-    return elem.className.replace(tmp, '');
+    elem.className = elem.className.replace(tmp, '');
+    return elem;
 };
 
 function addClass(elem, klass) {
     if(hasClass(elem, klass)) return;
-    return elem.className += ' ' + klass;
+    elem.className += ' ' + klass;
+    return elem;
 };
 
 function disableChoice(choice) {
     removeClass(choice, GameSettings.activeChoice);
     addClass(choice, GameSettings.disabledChoice);
+};
+
+function enableChoice(choice) {
+    removeClass(choice, GameSettings.disabledChoice);
 };
 
 function disableAllChoices() {
@@ -84,8 +90,10 @@ function disableAllChoices() {
 
 function enableAllChoices() {
     for(var i = 0; i < GameSettings.choicesElements.length; i++) {
-        removeClass(GameSettings.choicesElements[i], GameSettings.disabledChoice);
-        removeClass(GameSettings.choicesElements[i], GameSettings.activeChoice);
+        enableChoice(GameSettings.choicesElements[i]);
+        if(hasClass(GameSettings.choicesElements[i], GameSettings.activeChoice)) {
+            removeClass(GameSettings.choicesElements[i], GameSettings.activeChoice);
+        }
     }
 };
 
@@ -94,7 +102,8 @@ function reload() {
 };
 
 function continueGame() {
-    requestQuestion('contents/q' + ++GameSettings.currentQuestion + '.json');
+    if(++GameSettings.currentQuestion > 4) GameSettings.currentQuestion = 1; 
+    requestQuestion('contents/q' + GameSettings.currentQuestion + '.json');
 };
 
 function startTimer() {
