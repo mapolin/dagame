@@ -1,3 +1,37 @@
+GameSettings = {
+    rows: 'choice-row',
+    choices: 'game-choice',
+    choicesElements: null,
+    question: '',
+    questionElement: null,
+    activeChoice: 'choice-picked',
+    disabledChoice: 'choice-disabled',
+    timer: null,
+    questionTimer: null,
+    questionTimeLimit: 10,
+    XHR: null,
+    currentQuestion: 1
+};
+
+function startGame() {
+    var i, rows = document.getElementsByClassName(GameSettings.rows);
+
+    GameSettings.choicesElements = document.getElementsByClassName(GameSettings.choices);
+    GameSettings.timer = document.getElementById('game-timer');
+    GameSettings.questionElement = document.getElementById('game-question');
+    GameSettings.questionElement = GameSettings.questionElement.getElementsByTagName('span')[0];
+
+    for(i = 0; i < rows.length; i++) {
+        unify(rows[i], '.' + GameSettings.choices);
+    }
+
+    for(i = 0; i < GameSettings.choicesElements.length; i++) {
+        GameSettings.choicesElements[i].addEventListener('mouseup', handleChoice, false);
+    }
+
+    startTimer();
+};
+
 function unify(objects, selector) {
     var i, j, children;
 
@@ -21,27 +55,92 @@ function unify(objects, selector) {
             }
         }
     }
-}
+};
 
 function hasClass(elem, klass) {
-    return elem.className.indexOf(klass) > 0;
-}
+    return elem.className.indexOf(klass) >= 0;
+};
 
 function removeClass(elem, klass) {
     var tmp = hasClass(elem, ' ' + klass) ? ' ' + klass : klass;
     return elem.className.replace(tmp, '');
-}
+};
 
 function addClass(elem, klass) {
-    console.log(hasClass(elem, klass))
     if(hasClass(elem, klass)) return;
     return elem.className += ' ' + klass;
-}
+};
 
 function disableChoice(choice) {
     removeClass(choice, GameSettings.activeChoice);
     addClass(choice, GameSettings.disabledChoice);
-}
+};
+
+function disableAllChoices() {
+    for(var i = 0; i < GameSettings.choicesElements.length; i++) {
+        disableChoice(GameSettings.choicesElements[i]);
+    }
+};
+
+function enableAllChoices() {
+    for(var i = 0; i < GameSettings.choicesElements.length; i++) {
+        removeClass(GameSettings.choicesElements[i], GameSettings.disabledChoice);
+        removeClass(GameSettings.choicesElements[i], GameSettings.activeChoice);
+    }
+};
+
+function reload() {
+    GameSettings.reloadTimer = setTimeout(continueGame, 1000);
+};
+
+function continueGame() {
+    requestQuestion('contents/q' + ++GameSettings.currentQuestion + '.json');
+};
+
+function startTimer() {
+    GameSettings.timer.innerHTML = GameSettings.questionTimeLimit;
+    GameSettings.questionTimer = setTimeout(decrementTimer, 1000);
+};
+
+function stopTimer() {
+    clearTimeout(GameSettings.questionTimer);
+};
+
+function decrementTimer() {
+    var cTime = parseInt(GameSettings.timer.innerHTML);
+    cTime--;
+
+    GameSettings.timer.innerHTML = cTime;
+
+    if(cTime <= 0) {
+        disableAllChoices();
+        stopTimer();
+        return;
+    }
+    GameSettings.questionTimer = setTimeout(decrementTimer, 1000)
+};
+
+function requestQuestion(url) {
+    GameSettings.XHR = new XMLHttpRequest();
+    GameSettings.XHR.open('GET', url);
+    GameSettings.XHR.onreadystatechange = loadQuestion;
+
+    GameSettings.XHR.send(null);
+};
+
+function loadQuestion() {
+    if(GameSettings.XHR.readyState == 4) {
+        var resp = JSON.parse(GameSettings.XHR.responseText);
+        addQuestion(resp.question);
+    }
+};
+
+function addQuestion(question) {
+    GameSettings.questionElement.innerHTML = '';
+    GameSettings.questionElement.innerHTML = question;
+
+    enableAllChoices();
+};
 
 function handleChoice(event) {
     var chosen = event.target, i;
@@ -54,10 +153,12 @@ function handleChoice(event) {
         return;
     }
 
-    for(i = 0; i < GameSettings.choicesElements.length; i++) {
-        disableChoice(GameSettings.choicesElements[i]);
-    }
+    disableAllChoices();
+    
+    stopTimer();
 
     removeClass(chosen, GameSettings.disabledChoice);
     addClass(chosen, GameSettings.activeChoice);
-}
+
+    reload();
+};

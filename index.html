@@ -6,25 +6,7 @@
     <script type="text/javascript" src="js/game.js"></script>
     
     <script type="text/javascript">
-        GameSettings = {
-            rows: 'choice-row',
-            choices: 'game-choice',
-            choicesElements: null,
-            activeChoice: 'choice-picked',
-            disabledChoice: 'choice-disabled'
-        };
-
-        window.onload = function() {
-            var rows = document.getElementsByClassName(GameSettings.rows);
-            GameSettings.choicesElements = document.getElementsByClassName(GameSettings.choices);
-            var i;
-            for(i = 0; i < rows.length; i++) {
-                unify(rows[i], '.' + GameSettings.choices);
-            }
-
-            for(i = 0; i < GameSettings.choicesElements.length; i++)
-                GameSettings.choicesElements[i].addEventListener('mouseup', handleChoice, false);
-        };
+        window.onload = startGame;
     </script>
 
     <!--[if gte IE 9]>
@@ -39,8 +21,8 @@
     <div id="game-playground">
         <div id="game-content">
             <div id="game-question" class="game-bordered-box">
-                A sample question which isn't that long but isn't very short either.
-                What do you think?
+                <span>A sample question which isn't that long but isn't very short either.
+                What do you think?</span>
                 <div id="game-timer" class="game-bordered-box">60</div>
             </div>
             <div id="game-choices">
